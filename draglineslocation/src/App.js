@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import GeoLocation from './components/GeoLocation.js'; // Import the GeoLocation component
-import Button from './components/Example.js'; // Import the Example component
-
+import Button from './components/Example.js'; // Import the Button component
 
 function App() {
+  const [fetchingLocation, setFetchingLocation] = useState(false);
+
+  const handleClick = () => {
+    setFetchingLocation(true);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <p>
-          Testing
-        </p>
-        <GeoLocation /> 
-        <Button /> 
+        <GeoLocation fetching={fetchingLocation} />
+        <Button onClick={handleClick} />
       </header>
     </div>
   );
 }
-
-
 
 export default App;
