@@ -15,8 +15,7 @@ function GeoLocation({ fetching }) {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [error, setError] = useState(null);
-  const [x, setX] = useState(null);
-  const [y, setY] = useState(null);
+  const [coordinatesList, setCoordinatesList] = useState([]);
 
   useEffect(() => {
     if (fetching) {
@@ -25,9 +24,6 @@ function GeoLocation({ fetching }) {
           position => {
             setLatitude(position.coords.latitude);
             setLongitude(position.coords.longitude);
-            const { x, y } = latLonToStatePlane(position.coords.latitude, position.coords.longitude);
-            setX(x);
-            setY(y);
           },
           error => {
             setError(error.message);
@@ -41,6 +37,13 @@ function GeoLocation({ fetching }) {
     }
   }, [fetching]);
 
+  const handleSaveCoordinates = () => {
+    if (latitude !== null && longitude !== null) {
+      const spcsCoordinates = latLonToStatePlane(latitude, longitude);
+      setCoordinatesList([...coordinatesList, spcsCoordinates]);
+    }
+  };
+
   return (
     <div>
       <h2>Geolocation Information</h2>
@@ -48,14 +51,20 @@ function GeoLocation({ fetching }) {
         <p>Error: {error}</p>
       ) : (
         <div>
-          {latitude && longitude && (
+          {latitude !== null && longitude !== null && (
             <div>
               <p>Latitude: {latitude}, Longitude: {longitude}</p>
-              <p>X (SPCS Florida East): {x.toFixed(2)}, Y (SPCS Florida East): {y.toFixed(2)}</p>
+              <button onClick={handleSaveCoordinates}>Save Coordinates</button>
             </div>
           )}
         </div>
       )}
+      <h3>Florida Coordinate System:</h3>
+      <ul>
+        {coordinatesList.map((coordinates, index) => (
+          <li key={index}>X: {coordinates.x.toFixed(2)}, Y: {coordinates.y.toFixed(2)}</li>
+        ))}
+      </ul>
     </div>
   );
 }
